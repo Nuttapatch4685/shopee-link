@@ -149,10 +149,10 @@ const UserPage = () => {
           <h1 className="text-2xl font-medium">ผู้ใช้งาน </h1>
         </div>
         <div className="grid grid-cols-12 py-4 px-4">
-          <div className="col-span-4">
+          <div className="lg:col-span-4 col-span-6">
             <TextField className="w-1/3" placeholder="ค้นหา..." onChange={(e) => setKeyword(e.target.value)} />
           </div>
-          <div className="col-span-8">
+          <div className="lg:col-span-8 col-span-6">
             <div className="text-right">
               <Link href="/users/create">
                 <Button className="uppercase">
@@ -165,57 +165,59 @@ const UserPage = () => {
             </div>
           </div>
         </div>
-        <table style={{ width: "100%", minWidth: "700px" }} className="bg-white">
-          <thead className="w-full h-14 bg-primary text-white">
-            <tr>
-              <th className="w-[100px]">ลำดับ</th>
-              <th className="text-left">ชื่อผู้ใข้งาน</th>
-              <th className="text-left">เบอร์โทรศัพท์</th>
-              <th className="text-left">เครดิต</th>
-              <th className="text-left">ประเภทผู้ใช้</th>
-              <th className="w-[100px] text-center">สถานะ</th>
-              <th className=" text-center">สร้างเมื่อ</th>
-              <th className=" text-center">แก้ไขล่าสุด</th>
-              <th className="text-center"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users?.filter?.length > 0 ? (
-              users?.filter?.map((user, index) => (
-                <tr className={classNames(`h-14`, index % 2 === 0 ? "bg-primary/10" : "")} key={`users_${index}`}>
-                  <td className="text-center w-[100px]">{index + 1}</td>
-                  <td className="text-left">{user.username}</td>
-                  <td className="text-left">{user.phone}</td>
-                  <td className="text-left">{user.credit}</td>
-                  <td className="text-left">{user.role}</td>
-                  <td className="text-left">{generateStatus(user.status)}</td>
-                  <td className="text-center">{dayjs(user.createdAt).format("DD-MM-YYYY HH:mm:ss")}</td>
-                  <td className="text-center">{dayjs(user.updatedAt).format("DD-MM-YYYY HH:mm:ss")}</td>
-                  <td className="text-center">
-                    <div className="flex justify-center">
-                      <Link href={`/users/edit/${user.user_id}`}>
-                        <button className="w-10 h-10 bg-amber-400 text-center text-white rounded-md justify-center align-middle cursor-pointer hover:bg-amber-400/70 transition duration-300 mx-1">
-                          <FaPencil className="block mx-auto" />
+        <div className="w-full overflow-auto">
+          <table className="bg-white lg:w-full w-[1200px]">
+            <thead className="w-full h-14 bg-primary text-white">
+              <tr>
+                <th className="w-[100px]">ลำดับ</th>
+                <th className="text-left">ชื่อผู้ใข้งาน</th>
+                <th className="text-left">เบอร์โทรศัพท์</th>
+                <th className="text-left">เครดิต</th>
+                <th className="text-left">ประเภทผู้ใช้</th>
+                <th className="w-[100px] text-center">สถานะ</th>
+                <th className=" text-center">สร้างเมื่อ</th>
+                <th className=" text-center">แก้ไขล่าสุด</th>
+                <th className="text-center"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {users?.filter?.length > 0 ? (
+                users?.filter?.map((user, index) => (
+                  <tr className={classNames(`h-14`, index % 2 === 0 ? "bg-primary/10" : "")} key={`users_${index}`}>
+                    <td className="text-center w-[100px]">{index + 1}</td>
+                    <td className="text-left">{user.username}</td>
+                    <td className="text-left">{user.phone}</td>
+                    <td className="text-left">{user.credit}</td>
+                    <td className="text-left">{user.role}</td>
+                    <td className="text-left">{generateStatus(user.status)}</td>
+                    <td className="text-center">{dayjs(user.createdAt).format("DD-MM-YYYY HH:mm:ss")}</td>
+                    <td className="text-center">{dayjs(user.updatedAt).format("DD-MM-YYYY HH:mm:ss")}</td>
+                    <td className="text-center">
+                      <div className="flex justify-center">
+                        <Link href={`/users/edit/${user.user_id}`}>
+                          <button className="w-10 h-10 bg-amber-400 text-center text-white rounded-md justify-center align-middle cursor-pointer hover:bg-amber-400/70 transition duration-300 mx-1">
+                            <FaPencil className="block mx-auto" />
+                          </button>
+                        </Link>
+                        <button
+                          className="w-10 h-10 bg-red-400 text-center text-white rounded-md justify-center align-middle cursor-pointer hover:bg-red-400/70 transition duration-300 mx-1"
+                          onClick={() => handleDelete(user.user_id)}>
+                          <FaTrash className="block mx-auto" />
                         </button>
-                      </Link>
-                      <button
-                        className="w-10 h-10 bg-red-400 text-center text-white rounded-md justify-center align-middle cursor-pointer hover:bg-red-400/70 transition duration-300 mx-1"
-                        onClick={() => handleDelete(user.user_id)}>
-                        <FaTrash className="block mx-auto" />
-                      </button>
-                    </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={8} className="text-center py-4">
+                    ไม่มีข้อมูล
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={8} className="text-center py-4">
-                  ไม่มีข้อมูล
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
         <div className="relative mt-4 md:pt-0 py-10 mb-10">
           {/* <span className="absolute left-0 top-0 text-gray-400 pl-4">
             {totalPages * currentPage - 9}-{totalPages * currentPage} จาก {currentItems.length} รายการ

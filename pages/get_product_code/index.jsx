@@ -83,10 +83,12 @@ const DailyProduct = () => {
         </div>
         <textarea id="html-input" placeholder="วางโค้ด HTML หรือ JSON ที่นี่..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
         <div className="buttons">
-          <Button onClick={() => extractProductKeys()} className="mr-2">
+          <Button onClick={() => extractProductKeys()} className="mr-2 lg:w-1/4 w-full mb-1">
             ดึงรหัสสินค้า
           </Button>
-          <Button onClick={() => copyAllKeys()}>คัดลอกทั้งหมด</Button>
+          <Button onClick={() => copyAllKeys()} className="lg:w-1/4 w-full">
+            คัดลอกทั้งหมด
+          </Button>
         </div>
         <div className="output" id="result-output"></div>
       </div>

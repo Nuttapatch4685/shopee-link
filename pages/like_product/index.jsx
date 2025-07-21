@@ -56,10 +56,12 @@ const LikeProduct = () => {
         </p>
 
         <textarea id="jsonInput" placeholder="Paste your JSON here..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
-        <Button onClick={() => extractLinks()} className="mr-2">
+        <Button onClick={() => extractLinks()} className="mr-2 lg:w-1/4 w-full mb-1">
           Extract Links
         </Button>
-        <Button onClick={() => copyLinks()}>Copy All Links</Button>
+        <Button onClick={() => copyLinks()} className="lg:w-1/4 w-full">
+          Copy All Links
+        </Button>
 
         <div class="output">
           <h2 className="text-xl font-medium mt-4">Extracted Links</h2>

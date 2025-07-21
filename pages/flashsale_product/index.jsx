@@ -53,8 +53,12 @@ const DailyProduct = () => {
         <div className="output" id="linkOutput">
           ลิงค์สินค้าจะแสดงที่นี่...
         </div>
-        <Button onClick={() => extractLinks()}>ดึงสินค้า</Button>
-        <Button onClick={() => copyLinks()}>คัดลอกลิงค์ทั้งหมด</Button>
+        <Button onClick={() => extractLinks()} className="mr-2 lg:w-1/4 w-full mb-1">
+          ดึงสินค้า
+        </Button>
+        <Button onClick={() => copyLinks()} className="lg:w-1/4 w-full">
+          คัดลอกลิงค์ทั้งหมด
+        </Button>
       </div>
     </Layout>
   );

@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
 import { GoDot } from "react-icons/go";
 import classNames from "classnames";
+import { LiaTimesSolid } from "react-icons/lia";
 
-const Sidenav = () => {
+const Sidenav = (props) => {
   const { user } = useAuth();
   const pathname = usePathname();
+  const { toggle, setToggle } = props;
 
   const menus = [
     {
@@ -61,7 +63,12 @@ const Sidenav = () => {
   ];
 
   return (
-    <div className="w-[300px] h-[100vh] pt-16 fixed top-0 left-0 z-20 shadow-md bg-white">
+    <div className={classNames(`w-[300px] h-[100vh] fixed top-0 left-0 z-20 shadow-md bg-white lg:block overflow-auto`, toggle ? "block" : "hidden")}>
+      <div className="h-16 relative">
+        <button className="w-10 h-10 bg-primary text-center justify-center pl-[10px] items-center absolute right-2 top-3 text-white lg:hidden block" onClick={() => setToggle(false)}>
+          <LiaTimesSolid className="w-5 h-5" />
+        </button>
+      </div>
       <ul className="px-2">
         {menus.map((item, index) => (
           <React.Fragment key={index}>

@@ -102,7 +102,7 @@ const EditUser = () => {
           <>Loading...</>
         ) : (
           <form onSubmit={handleSubmit(handleUpdate)}>
-            <div className="w-1/2 mx-auto py-4">
+            <div className="lg:w-1/2 w-full mx-auto p-4">
               <div className="mb-4">
                 <label>ชื่อผู้ใช้</label>
                 <TextField disabled defaultValue={data?.username} {...register("username")} />
@@ -241,11 +241,11 @@ const EditUser = () => {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button className="w-1/4 flex justify-center items-center mr-2" color="secondary" onClick={() => router.push("/users")} type="button">
+                <Button className="lg:w-1/4 w-1/2 flex justify-center items-center mr-2" color="secondary" onClick={() => router.push("/users")} type="button">
                   <span className="mr-2">ยกเลิก</span>
                   <LiaTimesSolid />
                 </Button>
-                <Button className="w-1/4 flex justify-center items-center mr-2" type="submit" disabled={sending}>
+                <Button className="lg:w-1/4 w-1/2 flex justify-center items-center" type="submit" disabled={sending}>
                   <span className="mr-2">บันทึก</span>
                   <IoSaveOutline className="w-5 h-5" />
                 </Button>

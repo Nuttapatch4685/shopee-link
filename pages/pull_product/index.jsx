@@ -86,15 +86,29 @@ const DailyProduct = () => {
 
         <textarea id="html-input" placeholder="วางโค้ด HTML ของสินค้า..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
         <div className="my-4">
-          <input id="min-sales" className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100" type="number" placeholder="ยอดขายขั้นต่ำ (ชิ้น)" />
-          <input id="max-sales" className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100" type="number" placeholder="ยอดขายสูงสุด (ชิ้น)" />
-          <Button onClick={() => extractCommissionLinks()} className="mr-2">
-            ดึงสินค้ามีค่าคอม
-          </Button>
-          <Button onClick={() => extractNonCommissionLinks()} className="mr-2">
-            ดึงสินค้าไม่มีค่าคอม
-          </Button>
-          <Button onClick={() => copyAllLinks()}>คัดลอกลิงค์ทั้งหมด</Button>
+          <input
+            id="min-sales"
+            className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100 mb-1 lg:w-1/4 w-full"
+            type="number"
+            placeholder="ยอดขายขั้นต่ำ (ชิ้น)"
+          />
+          <input
+            id="max-sales"
+            className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100 mb-1 lg:w-1/4 w-full"
+            type="number"
+            placeholder="ยอดขายสูงสุด (ชิ้น)"
+          />
+          <div className="w-full">
+            <Button onClick={() => extractCommissionLinks()} className="mr-2 mb-1 lg:w-1/4 w-full">
+              ดึงสินค้ามีค่าคอม
+            </Button>
+            <Button onClick={() => extractNonCommissionLinks()} className="mr-2 mb-1 lg:w-1/4 w-full">
+              ดึงสินค้าไม่มีค่าคอม
+            </Button>
+            <Button onClick={() => copyAllLinks()} className="lg:w-1/4 w-full">
+              คัดลอกลิงค์ทั้งหมด
+            </Button>
+          </div>
         </div>
         <div class="min-h-[250px] bg-white w-full border border-gray-200 rounded-md mt-2" id="result-output"></div>
       </div>

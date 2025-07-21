@@ -59,7 +59,7 @@ const DailyProduct = () => {
         <br />
         <textarea id="urlList" placeholder="Enter URLs here (one per line)" className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
 
-        <Button onClick={() => searchURL()} className="mb-2">
+        <Button onClick={() => searchURL()} className="lg:w-1/4 w-full mb-2">
           Search
         </Button>
 

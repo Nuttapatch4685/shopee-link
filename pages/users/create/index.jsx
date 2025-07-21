@@ -106,7 +106,7 @@ const CreateUser = () => {
           <h1 className="text-2xl font-medium">เพิ่มผู้ใช้งาน</h1>
         </div>
         <form onSubmit={handleSubmit(handleCreate)}>
-          <div className="w-1/2 mx-auto py-4">
+          <div className="lg:w-1/2 w-full mx-auto py-4 px-4">
             <div className="mb-4">
               <label>ชื่อผู้ใช้</label>
               <TextField
@@ -289,11 +289,11 @@ const CreateUser = () => {
               </div>
             </div>
             <div className="flex justify-end">
-              <Button className="w-1/4 flex justify-center items-center mr-2" color="secondary" onClick={() => router.push("/users")} type="button">
+              <Button className="lg:w-1/4 w-1/2 flex justify-center items-center mr-2" color="secondary" onClick={() => router.push("/users")} type="button">
                 <span className="mr-2">ยกเลิก</span>
                 <LiaTimesSolid />
               </Button>
-              <Button className="w-1/4 flex justify-center items-center mr-2" type="submit" disabled={sending}>
+              <Button className="lg:w-1/4 w-1/2 flex justify-center items-center" type="submit" disabled={sending}>
                 <span className="mr-2">บันทึก</span>
                 <IoSaveOutline className="w-5 h-5" />
               </Button>
