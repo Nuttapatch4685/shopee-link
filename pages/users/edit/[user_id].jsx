@@ -69,12 +69,22 @@ const EditUser = () => {
         status: params.status,
         role: params.role,
         password: params.password,
+        user_id: userId,
       };
-      const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, payload);
+
+      let response = await fetch("/api/users/update", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
 
       if (response.status === 200) {
-        const { message } = response.data;
+        let dataResp = await response.json();
+        const { message } = dataResp;
         Alert.success(message).then(() => router.push("/users"));
+      } else {
+        let dataResp = await response.json();
+        const { message } = dataResp;
+        Alert.error(message);
       }
     } catch (error) {
       const { data } = error.response;

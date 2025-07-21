@@ -40,26 +40,6 @@ const CreateUser = () => {
   const [typePassword, setTypePassword] = useState("password");
   const [typeConfirmPassword, setTypeConfirmPassword] = useState("password");
 
-  const fetchUser = async (userId) => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`);
-
-      if (response.status === 200) {
-        setData(response.data);
-      }
-    } catch (error) {
-      Alert.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUser(userId);
-    }
-  }, [userId]);
-
   const handleCreate = async (params) => {
     try {
       setSending(true);
@@ -73,14 +53,19 @@ const CreateUser = () => {
         created_by: user?.user_id,
         updated_by: user?.user_id,
       };
-      console.log("patload", payload);
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, payload);
+
+      let response = await fetch("/api/users/create", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
 
       if (response.status === 200) {
-        const { message } = response.data;
+        let dataResp = await response.json();
+        const { message } = dataResp;
         Alert.success(message).then(() => router.push("/users"));
       } else {
-        const { message } = response.data;
+        let dataResp = await response.json();
+        const { message } = dataResp;
         Alert.error(message);
       }
     } catch (error) {
