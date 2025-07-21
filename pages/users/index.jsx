@@ -170,7 +170,7 @@ const UserPage = () => {
             <thead className="w-full h-14 bg-primary text-white">
               <tr>
                 <th className="w-[100px]">ลำดับ</th>
-                <th className="text-left">ชื่อผู้ใข้งาน</th>
+                <th className="text-left">ชื่อผู้ใช้งาน</th>
                 <th className="text-left">เบอร์โทรศัพท์</th>
                 <th className="text-left">เครดิต</th>
                 <th className="text-left">ประเภทผู้ใช้</th>
