@@ -51,12 +51,12 @@ const DailyProduct = () => {
           placeholder="Enter long links here (one per line, up to 1000 links)"
           className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
 
-        <Button onclick={() => shortenLinks()} className="lg:w-1/4 w-full">
+        <Button onClick={() => shortenLinks()} className="lg:w-1/4 w-full">
           Shorten Links
         </Button>
 
         <div id="result" class="result" style={{ display: "none" }}></div>
-        <Button id="copyButton" style={{ display: "none" }} onclick={() => copyResults()}>
+        <Button id="copyButton" style={{ display: "none" }} onClick={() => copyResults()}>
           Copy All Links
         </Button>
       </div>
