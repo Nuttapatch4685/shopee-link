@@ -110,7 +110,7 @@ const DailyProduct = () => {
             </Button>
           </div>
         </div>
-        <div class="min-h-[250px] bg-white w-full border border-gray-200 rounded-md mt-2" id="result-output"></div>
+        <div className="min-h-[250px] bg-white w-full border border-gray-200 rounded-md mt-2" id="result-output"></div>
       </div>
     </Layout>
   );

@@ -63,7 +63,7 @@ const DailyProduct = () => {
           Search
         </Button>
 
-        <div id="result" class="result" style={{ display: "none" }} className="mb-2"></div>
+        <div id="result" style={{ display: "none" }} className="mb-2"></div>
         <Button id="copyButton" style={{ display: "none" }} onClick={() => copyLinks()}>
           Copy All Links
         </Button>

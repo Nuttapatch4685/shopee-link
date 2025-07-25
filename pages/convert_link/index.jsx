@@ -55,7 +55,7 @@ const DailyProduct = () => {
           Shorten Links
         </Button>
 
-        <div id="result" class="result" style={{ display: "none" }}></div>
+        <div id="result" className="result" style={{ display: "none" }}></div>
         <Button id="copyButton" style={{ display: "none" }} onClick={() => copyResults()}>
           Copy All Links
         </Button>

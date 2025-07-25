@@ -70,9 +70,9 @@ const DailyProduct = () => {
           Copy All Links
         </Button>
 
-        <div class="output">
+        <div className="output">
           <h2 className="text-xl font-medium mt-4">Extracted Links</h2>
-          <textarea id="linksOutput" readonly placeholder="Links will appear here..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
+          <textarea id="linksOutput" readOnly placeholder="Links will appear here..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
         </div>
       </div>
     </Layout>

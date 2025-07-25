@@ -16,7 +16,7 @@ const Topnav = (props) => {
         </button>
         {user?.role === "USER" ? <div className="mr-4 pt-2 text-white">เครดิต : {user?.credit}</div> : <></>}
         <div className="">
-          <button onClick={logout} className="px-4 h-10 rounded-md uppercase cursor-pointer flex justify-center items-center text-white border border-white">
+          <button onClick={() => logout(user)} className="px-4 h-10 rounded-md uppercase cursor-pointer flex justify-center items-center text-white border border-white">
             อกกจากระบบ <CiLogout className="w-6 h-6" />
           </button>
         </div>
