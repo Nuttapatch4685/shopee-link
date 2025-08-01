@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   await axios
     .put(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${payload.user_id}`, payload)
     .then((data) => {
+      console.log("response update", data);
       if (data.status === 200) {
         res.status(200).json(data.data);
       }
