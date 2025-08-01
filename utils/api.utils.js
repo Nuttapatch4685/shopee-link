@@ -26,16 +26,15 @@ const axiosInstance = axios.create({
   },
 });
 
-axiosInstance.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
+// Only add interceptor on the client
+if (typeof window !== "undefined") {
+  axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-  }
-
-  config.headers["Content-Type"] = "application/json";
-  return config;
-});
+    return config;
+  });
+}
 
 export default axiosInstance;
