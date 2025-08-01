@@ -11,6 +11,7 @@ export default async function handler(req, res) {
       }
     })
     .catch((e) => {
+      console.log("Update user frontend", e.message);
       let response = e.response;
       res.status(400).json(response.data);
     });
