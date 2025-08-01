@@ -4,30 +4,41 @@ import Layout from "@/components/includes/Layout";
 import Button from "@/components/ui/Button";
 
 const DailyProduct = () => {
-  function extractLinks(hasCommission) {
-    const htmlInput = document.getElementById("html-input").value;
-    const minSales = parseFloat(document.getElementById("min-sales").value) || 0;
-    const maxSales = parseFloat(document.getElementById("max-sales").value) || Infinity;
+ 
+  const [htmlInput, setHtmlInput] = useState("");
+  const [minSales, setMinSales] = useState("");
+  const [maxSales, setMaxSales] = useState("");
+  const [results, setResults] = useState([]);
+
+  const extractLinks = (hasCommission) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlInput, "text/html");
 
     const items = doc.querySelectorAll(".shopee-search-item-result__item");
-    const resultOutput = document.getElementById("result-output");
-    resultOutput.innerHTML = "";
+    const extracted = [];
 
     items.forEach((item) => {
-      const commissionImg = item.querySelector('img[alt="ams-label"], img[src*="ams-label"], img[src*="sponsored"], img[alt="shopee-partner"]');
+      const commissionImg = item.querySelector(
+        'img[alt="ams-label"], img[src*="ams-label"], img[src*="sponsored"], img[alt="shopee-partner"]'
+      );
       const isCommission = commissionImg !== null;
 
       if (isCommission === hasCommission) {
-        const salesText = item.querySelector(".truncate.text-shopee-black87.text-xs.min-h-4")?.textContent || "";
-        const salesMatch = salesText.match(/ขายได้\s([\d,.]+)([kพัน]*)\sชิ้น/);
+        const salesText = item.textContent || "";
+        const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
 
         if (salesMatch) {
-          let amount = parseFloat(salesMatch[1].replace(",", ""));
-          if (salesMatch[2]?.includes("k") || salesMatch[2]?.includes("พัน")) amount *= 1000;
+          let amount = parseFloat(salesMatch[1].replace(/,/g, ""));
+          if (
+            salesMatch[2]?.includes("k") ||
+            salesMatch[2]?.includes("พัน")
+          )
+            amount *= 1000;
 
-          if (amount >= minSales && amount <= maxSales) {
+          const min = parseFloat(minSales) || 0;
+          const max = parseFloat(maxSales) || Infinity;
+
+          if (amount >= min && amount <= max) {
             const link = item.querySelector("a[href]");
             if (link) {
               const href = link.getAttribute("href");
@@ -36,82 +47,95 @@ const DailyProduct = () => {
                 const shopid = match[1];
                 const itemid = match[2];
                 const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-                const div = document.createElement("div");
-                div.textContent = productLink;
-                resultOutput.appendChild(div);
+                extracted.push(productLink);
               }
             }
           }
         }
       }
     });
-  }
 
-  function extractCommissionLinks() {
-    extractLinks(true);
-  }
+    setResults(extracted);
+  };
 
-  function extractNonCommissionLinks() {
-    extractLinks(false);
-  }
-
-  function copyAllLinks() {
-    const resultOutput = document.getElementById("result-output");
-    const links = Array.from(resultOutput.querySelectorAll("div"))
-      .map((div) => div.textContent)
-      .join("\n");
+  const copyAllLinks = () => {
     navigator.clipboard
-      .writeText(links)
+      .writeText(results.join("\n"))
       .then(() => alert("คัดลอกทั้งหมดสำเร็จ!"))
       .catch(() => alert("ไม่สามารถคัดลอกลิงค์ได้!"));
-  }
+  };
 
   return (
     <Layout>
-      <div className="w-full min-h-24 bg-white p-4 rounded">
-        <h1 className="text-3xl mb-4">ดึงสินค้าตามใจ</h1>
-        <div className="mb-10 shadow-xl border-l-4 border-primary p-6 rounded">
-          <strong>วิธีใช้งาน:</strong>
-          <ol>
-            <li>
-              1. คลิกขวาที่สินค้า เลือก <em>Inspect</em>
-            </li>
-            <li>
-              2. ลิงค์สินค้าอยู่ในส่วน <code>ul class=</code>
-            </li>
-            <li>3. คลิกขวา Copy &gt; Copy element</li>
-            <li>4. นำมาใส่ในกล่องข้อความและกดดึงสินค้า</li>
-          </ol>
-        </div>
+      <div className="p-6 bg-gray-100 min-h-screen text-gray-800">
+      <h1 className="text-2xl font-bold text-center text-orange-600 mb-4">
+        ดึงสินค้าตามใจ
+      </h1>
 
-        <textarea id="html-input" placeholder="วางโค้ด HTML ของสินค้า..." className="w-full border border-gray-200 min-h-48 focus:outline-none focus:border-primary p-2 rounded"></textarea>
-        <div className="my-4">
-          <input
-            id="min-sales"
-            className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100 mb-1 lg:w-1/4 w-full"
-            type="number"
-            placeholder="ยอดขายขั้นต่ำ (ชิ้น)"
-          />
-          <input
-            id="max-sales"
-            className="border h-12 mr-2 rounded-md focus:outline-none px-2 transition duration-300 disabled:bg-gray-100 mb-1 lg:w-1/4 w-full"
-            type="number"
-            placeholder="ยอดขายสูงสุด (ชิ้น)"
-          />
-          <div className="w-full">
-            <Button onClick={() => extractCommissionLinks()} className="mr-2 mb-1 lg:w-1/4 w-full">
-              ดึงสินค้ามีค่าคอม
-            </Button>
-            <Button onClick={() => extractNonCommissionLinks()} className="mr-2 mb-1 lg:w-1/4 w-full">
-              ดึงสินค้าไม่มีค่าคอม
-            </Button>
-            <Button onClick={() => copyAllLinks()} className="lg:w-1/4 w-full">
-              คัดลอกลิงค์ทั้งหมด
-            </Button>
-          </div>
-        </div>
-        <div className="min-h-[250px] bg-white w-full border border-gray-200 rounded-md mt-2" id="result-output"></div>
+      <div className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-600 mb-4">
+        <strong>วิธีใช้งาน:</strong>
+        <ol className="list-decimal pl-5 mt-2 text-sm">
+          <li>คลิกขวาที่สินค้า เลือก <em>Inspect</em></li>
+          <li>ลิงค์สินค้าอยู่ในส่วน <code>ul class=</code></li>
+          <li>คลิกขวา Copy &gt; Copy element</li>
+          <li>นำมาใส่ในกล่องข้อความและกดดึงสินค้า</li>
+        </ol>
       </div>
+
+      <textarea
+        value={htmlInput}
+        onChange={(e) => setHtmlInput(e.target.value)}
+        placeholder="วางโค้ด HTML ของสินค้า..."
+        className="w-full p-3 border rounded mb-4 h-40"
+      />
+
+      <div className="flex flex-wrap gap-3 mb-4">
+        <input
+          type="number"
+          value={minSales}
+          onChange={(e) => setMinSales(e.target.value)}
+          placeholder="ยอดขายขั้นต่ำ (ชิ้น)"
+          className="p-2 border rounded"
+        />
+        <input
+          type="number"
+          value={maxSales}
+          onChange={(e) => setMaxSales(e.target.value)}
+          placeholder="ยอดขายสูงสุด (ชิ้น)"
+          className="p-2 border rounded"
+        />
+        <button
+          onClick={() => extractLinks(true)}
+          className="bg-orange-600 text-white px-4 py-2 rounded"
+        >
+          ดึงสินค้ามีค่าคอม
+        </button>
+        <button
+          onClick={() => extractLinks(false)}
+          className="bg-orange-600 text-white px-4 py-2 rounded"
+        >
+          ดึงสินค้าไม่มีค่าคอม
+        </button>
+        <button
+          onClick={copyAllLinks}
+          className="bg-orange-600 text-white px-4 py-2 rounded"
+        >
+          คัดลอกลิงค์ทั้งหมด
+        </button>
+      </div>
+
+      <div className="bg-white border rounded p-4 shadow min-h-[200px] overflow-y-auto">
+        {results.length > 0 ? (
+          results.map((link, idx) => (
+            <div key={idx} className="text-sm mb-1">
+              {link}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 text-sm">ยังไม่มีลิงก์ที่ดึงได้</p>
+        )}
+      </div>
+    </div>
     </Layout>
   );
 };
