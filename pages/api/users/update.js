@@ -12,8 +12,9 @@ export default async function handler(req, res) {
       }
     })
     .catch((e) => {
-      console.log("Update user frontend", e.message);
+      console.log("Update user frontend : ", e.message);
       let response = e.response;
+      console.log("response catch : ", response);
       res.status(400).json(response.data);
     });
 }
