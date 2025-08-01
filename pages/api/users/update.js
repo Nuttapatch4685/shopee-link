@@ -1,26 +1,21 @@
-import axios from "axios";
+import axiosInstance from "@/utils/api.utils";
 
 export default async function handler(req, res) {
-  let payload = JSON.parse(req.body);
-  const token = localStorage.getItem("token");
+  let getPayload = JSON.parse(req.body);
 
-  await axios
-    .put(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${payload.user_id}`, payload, {
+  await axiosInstance
+    .put(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${getPayload.data.user_id}`, getPayload.data, {
       headers: {
-        Authorization: token, // Forward the token
+        Authorization: `Bearer ${getPayload.token}`,
         "Content-Type": "application/json",
       },
     })
     .then((data) => {
-      console.log("response update", data);
       if (data.status === 200) {
         res.status(200).json(data.data);
       }
     })
     .catch((e) => {
-      console.log("Update user frontend : ", e.message);
-      // let response = e.response;
-      // console.log("response catch : ", response);
-      res.status(400).json("Server error");
+      res.status(500).json(e.message);
     });
 }

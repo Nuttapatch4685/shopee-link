@@ -1,13 +1,12 @@
-import axios from "axios";
+import axiosInstance from "@/utils/api.utils";
 
 export default async function handler(req, res) {
-  let payload = JSON.parse(req.body);
-  const token = localStorage.getItem("token");
+  let getPayload = JSON.parse(req.body);
 
-  await axios
-    .post(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, payload, {
+  await axiosInstance
+    .post(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, getPayload.data, {
       headers: {
-        Authorization: token, // Forward the token
+        Authorization: `Bearer ${getPayload.token}`,
         "Content-Type": "application/json",
       },
     })
@@ -17,7 +16,6 @@ export default async function handler(req, res) {
       }
     })
     .catch((e) => {
-      let response = e.response;
-      res.status(400).json(response.data);
+      res.status(500).json(e.message);
     });
 }

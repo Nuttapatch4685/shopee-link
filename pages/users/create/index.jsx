@@ -44,14 +44,17 @@ const CreateUser = () => {
     try {
       setSending(true);
       const payload = {
-        username: params.username,
-        phone: params.phone,
-        credit: params.credit,
-        status: params.status,
-        password: params.password,
-        role: params.role,
-        created_by: user?.user_id,
-        updated_by: user?.user_id,
+        data: {
+          username: params.username,
+          phone: params.phone,
+          credit: params.credit,
+          status: params.status,
+          password: params.password,
+          role: params.role,
+          created_by: user?.user_id,
+          updated_by: user?.user_id,
+        },
+        token: localStorage.getItem("token"),
       };
 
       let response = await fetch("/api/users/create", {
@@ -65,12 +68,11 @@ const CreateUser = () => {
         Alert.success(message).then(() => router.push("/users"));
       } else {
         let dataResp = await response.json();
-        const { message } = dataResp;
-        Alert.error(message);
+        Alert.error(dataResp);
       }
     } catch (error) {
-      const { data } = error.response;
-      Alert.error(data.message);
+      // const { data } = error.response;
+      Alert.error(error.response);
     } finally {
       setSending(false);
     }

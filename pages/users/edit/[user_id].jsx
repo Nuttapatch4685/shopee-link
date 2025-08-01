@@ -63,13 +63,16 @@ const EditUser = () => {
     try {
       setSending(true);
       const payload = {
-        username: params.username,
-        phone: params.phone,
-        credit: params.credit,
-        status: params.status,
-        role: params.role,
-        password: params.password,
-        user_id: userId,
+        data: {
+          username: params.username,
+          phone: params.phone,
+          credit: params.credit,
+          status: params.status,
+          role: params.role,
+          password: params.password,
+          user_id: userId,
+        },
+        token: localStorage.getItem("token"),
       };
 
       let response = await fetch("/api/users/update", {
@@ -83,12 +86,10 @@ const EditUser = () => {
         Alert.success(message).then(() => router.push("/users"));
       } else {
         let dataResp = await response.json();
-        const { message } = dataResp;
-        Alert.error(message);
+        Alert.error(dataResp);
       }
     } catch (error) {
-      const { data } = error.response;
-      Alert.error(data.message);
+      Alert.error("เกิดข้อผิดพลาด");
     } finally {
       setSending(false);
     }

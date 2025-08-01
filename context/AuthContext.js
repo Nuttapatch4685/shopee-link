@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { usePathname } from "next/navigation";
 import axios from "@/utils/api.utils";
 import Alert from "@/utils/alerts.utils";
-import { jwtVerify } from "jose";
 
 const AuthContext = createContext();
 
