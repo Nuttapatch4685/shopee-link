@@ -1,4 +1,4 @@
-import axios from "@/utils/api.utils";
+import axios from "axios";
 
 export default async function handler(req, res) {
   let payload = JSON.parse(req.body);
