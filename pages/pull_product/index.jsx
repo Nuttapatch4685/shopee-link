@@ -1,6 +1,7 @@
 import React,{useState} from "react";
 import withProtectedUser from "@/hoc/withProtectedUser";
 import Layout from "@/components/includes/Layout";
+import Button from "@/components/ui/Button";
 
 const DailyProduct = () => {
   const [htmlInput, setHtmlInput] = useState("");
@@ -16,15 +17,15 @@ const DailyProduct = () => {
     const extracted = [];
 
     items.forEach((item) => {
-      // ✅ รองรับทั้ง DOM เก่าและใหม่
+      // ✅ รองรับทั้ง DOM เก่าและใหม่ แต่ไม่ใช้ flag-label หรือ "ช้อปปี้ถูกชัวร์"
       const commissionImg = item.querySelector(
-        'img[alt="ams-label"], img[src*="ams-label"], img[src*="sponsored"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[src*="promotion-label"], img[alt*="promotion-label-icon"], img[alt*="flag-label"], img[src*="flag-label"]'
+        'img[alt="ams-label"], img[src*="ams-label"], img[src*="sponsored"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[src*="promotion-label"], img[alt*="promotion-label-icon"]'
       );
       const isCommission = commissionImg !== null;
 
       if (isCommission === hasCommission) {
         const salesText = item.textContent || "";
-        // ✅ Regex ครอบคลุมทั้ง +, พัน, k, และ /เดือน
+        // ✅ Regex รองรับทั้ง +, k, พัน, /เดือน
         const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
 
         if (salesMatch) {
