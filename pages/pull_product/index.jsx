@@ -1,7 +1,7 @@
+"use client";
 import React,{useState} from "react";
 import withProtectedUser from "@/hoc/withProtectedUser";
 import Layout from "@/components/includes/Layout";
-import Button from "@/components/ui/Button";
 
 const DailyProduct = () => {
   const [htmlInput, setHtmlInput] = useState("");
@@ -10,37 +10,40 @@ const DailyProduct = () => {
   const [results, setResults] = useState([]);
 
   const extractLinks = (hasCommission) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlInput, "text/html");
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlInput, "text/html");
+      const items = doc.querySelectorAll(".shopee-search-item-result__item");
+      const extracted = [];
 
-    const items = doc.querySelectorAll(".shopee-search-item-result__item");
-    const extracted = [];
+      items.forEach((item) => {
+        // ✅ ตรวจ badge ค่าคอมทั้งโครงสร้างเก่า + ใหม่
+        const badge = item.querySelector(
+          'img[alt="ams-label"][src*="fd4662aa"], img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"]'
+        );
 
-    items.forEach((item) => {
-      // ✅ ตรวจจับ badge ams-label แบบเจาะจงที่สุด
-      const commissionImg = item.querySelector(
-        'img[alt="ams-label"][src*="fd4662aa56269f31f40d.png"], img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"]'
-      );
+        const isCommission = badge !== null;
 
-      const isCommission = commissionImg !== null;
+        if (isCommission === hasCommission) {
+          const salesText = item.textContent || "";
+          const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
 
-      if (isCommission === hasCommission) {
-        const salesText = item.textContent || "";
-        const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
-
-        if (salesMatch) {
-          let amount = parseFloat(salesMatch[1].replace(/,/g, ""));
-          if (salesMatch[2]?.includes("k") || salesMatch[2]?.includes("พัน"))
-            amount *= 1000;
+          let amount = 0;
+          if (salesMatch) {
+            amount = parseFloat(salesMatch[1].replace(/,/g, ""));
+            if (salesMatch[2]?.includes("k") || salesMatch[2]?.includes("พัน"))
+              amount *= 1000;
+          }
 
           const min = parseFloat(minSales) || 0;
           const max = parseFloat(maxSales) || Infinity;
 
           if (amount >= min && amount <= max) {
-            const link = item.querySelector("a[href]");
-            if (link) {
-              const href = link.getAttribute("href");
-              const match = href.match(/i\.(\d+)\.(\d+)/);
+            // ✅ หา <a> ไม่ว่าจะอยู่ level ไหนใน item
+            const linkEl = item.querySelector('a[href*="/-i."]');
+            if (linkEl) {
+              const href = linkEl.getAttribute("href");
+              const match = href.match(/-i\.(\d+)\.(\d+)/);
               if (match) {
                 const shopid = match[1];
                 const itemid = match[2];
@@ -50,13 +53,19 @@ const DailyProduct = () => {
             }
           }
         }
-      }
-    });
+      });
 
-    setResults(extracted);
+      setResults(extracted);
+    } catch (err) {
+      console.error("Parsing error:", err);
+    }
   };
 
   const copyAllLinks = () => {
+    if (results.length === 0) {
+      alert("ยังไม่มีลิงก์ให้คัดลอก!");
+      return;
+    }
     navigator.clipboard
       .writeText(results.join("\n"))
       .then(() => alert("คัดลอกทั้งหมดสำเร็จ!"))
@@ -75,7 +84,7 @@ const DailyProduct = () => {
           <ol className="list-decimal pl-5 mt-2 text-sm">
             <li>คลิกขวาที่สินค้า เลือก <em>Inspect</em></li>
             <li>ลิงค์สินค้าอยู่ในส่วน <code>ul class=</code></li>
-            <li>คลิกขวา Copy &gt; Copy element</li>
+            <li>คลิกขวา Copy &gt; Copy OuterHTML</li>
             <li>นำมาใส่ในกล่องข้อความและกดดึงสินค้า</li>
           </ol>
         </div>
@@ -118,7 +127,7 @@ const DailyProduct = () => {
             onClick={copyAllLinks}
             className="bg-orange-600 text-white px-4 py-2 rounded"
           >
-            คัดลอกลิงค์ทั้งหมด
+            คัดลอกลิงก์ทั้งหมด
           </button>
         </div>
 
