@@ -17,11 +17,10 @@ const DailyProduct = () => {
       const extracted = [];
 
       items.forEach((item) => {
-        // ✅ ตรวจ badge ค่าคอมทั้งโครงสร้างเก่า + ใหม่
+        // ✅ ตรวจ badge ams-label (ทั้งเก่า/ใหม่)
         const badge = item.querySelector(
-          'img[alt="ams-label"][src*="fd4662aa"], img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"]'
+          'img[alt="ams-label"], img[src*="ams-label"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"], img[alt="shopee-partner"]'
         );
-
         const isCommission = badge !== null;
 
         if (isCommission === hasCommission) {
@@ -39,7 +38,6 @@ const DailyProduct = () => {
           const max = parseFloat(maxSales) || Infinity;
 
           if (amount >= min && amount <= max) {
-            // ✅ หา <a> ไม่ว่าจะอยู่ level ไหนใน item
             const linkEl = item.querySelector('a[href*="/-i."]');
             if (linkEl) {
               const href = linkEl.getAttribute("href");
@@ -55,6 +53,7 @@ const DailyProduct = () => {
         }
       });
 
+      console.log("Extracted:", extracted);
       setResults(extracted);
     } catch (err) {
       console.error("Parsing error:", err);
@@ -84,7 +83,7 @@ const DailyProduct = () => {
           <ol className="list-decimal pl-5 mt-2 text-sm">
             <li>คลิกขวาที่สินค้า เลือก <em>Inspect</em></li>
             <li>ลิงค์สินค้าอยู่ในส่วน <code>ul class=</code></li>
-            <li>คลิกขวา Copy &gt; Copy OuterHTML</li>
+            <li>คลิกขวา Copy &gt; Copy element</li>
             <li>นำมาใส่ในกล่องข้อความและกดดึงสินค้า</li>
           </ol>
         </div>
