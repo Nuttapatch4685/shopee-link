@@ -17,16 +17,15 @@ const DailyProduct = () => {
     const extracted = [];
 
     items.forEach((item) => {
-      // ✅ รองรับทั้ง DOM เก่า และ DOM ลูกศิษย์ (promotion-label แบบเจาะจง)
+      // ✅ ตรวจจับ badge ams-label แบบเจาะจงที่สุด
       const commissionImg = item.querySelector(
-        'img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], div[style*="width: auto;"] img[alt="promotion-label"], img[alt*="promotion-label-icon"]'
+        'img[alt="ams-label"][src*="fd4662aa56269f31f40d.png"], img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"]'
       );
 
       const isCommission = commissionImg !== null;
 
       if (isCommission === hasCommission) {
         const salesText = item.textContent || "";
-        // ✅ Regex รองรับ +, k, พัน, /เดือน
         const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
 
         if (salesMatch) {
