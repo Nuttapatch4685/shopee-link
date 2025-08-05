@@ -1,7 +1,7 @@
-"use client";
 import React,{useState} from "react";
 import withProtectedUser from "@/hoc/withProtectedUser";
 import Layout from "@/components/includes/Layout";
+import Button from "@/components/ui/Button";
 
 const DailyProduct = () => {
   const [htmlInput, setHtmlInput] = useState("");
@@ -10,38 +10,38 @@ const DailyProduct = () => {
   const [results, setResults] = useState([]);
 
   const extractLinks = (hasCommission) => {
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlInput, "text/html");
-      const items = doc.querySelectorAll(".shopee-search-item-result__item");
-      const extracted = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlInput, "text/html");
 
-      items.forEach((item) => {
-        // ✅ ตรวจ badge ams-label (ทั้งเก่า/ใหม่)
-        const badge = item.querySelector(
-          'img[alt="ams-label"], img[src*="ams-label"], img[alt*="promotion-label"], img[alt*="promotion-label-icon"], img[alt="shopee-partner"]'
-        );
-        const isCommission = badge !== null;
+    const items = doc.querySelectorAll(".shopee-search-item-result__item");
+    const extracted = [];
 
-        if (isCommission === hasCommission) {
-          const salesText = item.textContent || "";
-          const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
+    items.forEach((item) => {
+      // ✅ รองรับทั้ง DOM เก่า และ DOM ลูกศิษย์ (promotion-label แบบเจาะจง)
+      const commissionImg = item.querySelector(
+        'img[alt="ams-label"], img[src*="ams-label"], img[alt="shopee-partner"], div[style*="width: auto;"] img[alt="promotion-label"], img[alt*="promotion-label-icon"]'
+      );
 
-          let amount = 0;
-          if (salesMatch) {
-            amount = parseFloat(salesMatch[1].replace(/,/g, ""));
-            if (salesMatch[2]?.includes("k") || salesMatch[2]?.includes("พัน"))
-              amount *= 1000;
-          }
+      const isCommission = commissionImg !== null;
+
+      if (isCommission === hasCommission) {
+        const salesText = item.textContent || "";
+        // ✅ Regex รองรับ +, k, พัน, /เดือน
+        const salesMatch = salesText.match(/ขายได้\s*([\d,.]+)([kพัน]*)\+?\s*ชิ้น/);
+
+        if (salesMatch) {
+          let amount = parseFloat(salesMatch[1].replace(/,/g, ""));
+          if (salesMatch[2]?.includes("k") || salesMatch[2]?.includes("พัน"))
+            amount *= 1000;
 
           const min = parseFloat(minSales) || 0;
           const max = parseFloat(maxSales) || Infinity;
 
           if (amount >= min && amount <= max) {
-            const linkEl = item.querySelector('a[href*="/-i."]');
-            if (linkEl) {
-              const href = linkEl.getAttribute("href");
-              const match = href.match(/-i\.(\d+)\.(\d+)/);
+            const link = item.querySelector("a[href]");
+            if (link) {
+              const href = link.getAttribute("href");
+              const match = href.match(/i\.(\d+)\.(\d+)/);
               if (match) {
                 const shopid = match[1];
                 const itemid = match[2];
@@ -51,20 +51,13 @@ const DailyProduct = () => {
             }
           }
         }
-      });
+      }
+    });
 
-      console.log("Extracted:", extracted);
-      setResults(extracted);
-    } catch (err) {
-      console.error("Parsing error:", err);
-    }
+    setResults(extracted);
   };
 
   const copyAllLinks = () => {
-    if (results.length === 0) {
-      alert("ยังไม่มีลิงก์ให้คัดลอก!");
-      return;
-    }
     navigator.clipboard
       .writeText(results.join("\n"))
       .then(() => alert("คัดลอกทั้งหมดสำเร็จ!"))
@@ -126,7 +119,7 @@ const DailyProduct = () => {
             onClick={copyAllLinks}
             className="bg-orange-600 text-white px-4 py-2 rounded"
           >
-            คัดลอกลิงก์ทั้งหมด
+            คัดลอกลิงค์ทั้งหมด
           </button>
         </div>
 
