@@ -16,17 +16,22 @@ const BestSaleProducts = () => {
 
     const extracted = [];
 
+    const commissionImageKeywords = [
+      "promotion-label",
+      "ams-label",
+      "fd4662aa56269f31f40d.png",
+      "shopee/modules-federation/live/0/shopee__item-card-standard-v2" // เผื่อ Shopee เปลี่ยนชื่อไฟล์
+    ];
+
     items.forEach((item) => {
-      // ตรวจสอบว่ามีรูปที่เป็น promotion (ตรวจจาก src รูป)
-      const promoImg = item.querySelector("img");
-      const promoSrc = promoImg?.getAttribute("src") || "";
+      // หาภาพทั้งหมดในสินค้า 1 ชิ้น
+      const images = item.querySelectorAll("img");
+      const hasCommissionImage = Array.from(images).some((img) => {
+        const src = img.getAttribute("src") || "";
+        return commissionImageKeywords.some((keyword) => src.includes(keyword));
+      });
 
-      const isCommission =
-        promoSrc.includes("promotion-label") ||
-        promoSrc.includes("ams-label") || // สำหรับโครงสร้างใหม่
-        promoSrc.includes("fd4662aa56269f31f40d.png");
-
-      if (!isCommission) return;
+      if (!hasCommissionImage) return;
 
       const linkTag = item.querySelector("a[href*='-i.']");
       if (!linkTag) return;
@@ -46,6 +51,7 @@ const BestSaleProducts = () => {
     console.error("Error extracting links:", error);
   }
 };
+
   
   const copyAllLinks = () => {
   const text = results.join("\n");
