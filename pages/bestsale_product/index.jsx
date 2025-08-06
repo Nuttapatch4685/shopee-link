@@ -9,39 +9,43 @@ const BestSaleProducts = () => {
   const [results, setResults] = useState([]);
 
   const extractCommissionProducts = () => {
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlInput, "text/html");
-      const items = doc.querySelectorAll("li");
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlInput, "text/html");
+    const items = doc.querySelectorAll("li");
 
-      const extracted = [];
+    const extracted = [];
 
-      items.forEach((item) => {
-        // ตรวจสอบว่าในแต่ละสินค้า มีรูป promotion label หรือไม่
-        const promoImg = item.querySelector("img[alt='promotion-label']");
-        if (!promoImg) return;
+    items.forEach((item) => {
+      // ตรวจสอบว่ามีรูปที่เป็น promotion (ตรวจจาก src รูป)
+      const promoImg = item.querySelector("img");
+      const promoSrc = promoImg?.getAttribute("src") || "";
 
-        // หา href จาก <a class="contents" href="/...">
-        const linkTag = item.querySelector("a.contents");
-        if (!linkTag) return;
+      const isCommission =
+        promoSrc.includes("promotion-label") ||
+        promoSrc.includes("ams-label") || // สำหรับโครงสร้างใหม่
+        promoSrc.includes("fd4662aa56269f31f40d.png");
 
-        const href = linkTag.getAttribute("href");
-        if (!href) return;
+      if (!isCommission) return;
 
-        const match = href.match(/-i\.(\d+)\.(\d+)/); // ดึง shopid และ itemid
-        if (match) {
-          const shopid = match[1];
-          const itemid = match[2];
-          const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-          extracted.push(productLink);
-        }
-      });
+      const linkTag = item.querySelector("a[href*='-i.']");
+      if (!linkTag) return;
 
-      setResults(extracted);
-    } catch (error) {
-      console.error("Error extracting links:", error);
-    }
-  };
+      const href = linkTag.getAttribute("href");
+      const match = href.match(/-i\.(\d+)\.(\d+)/);
+      if (match) {
+        const shopid = match[1];
+        const itemid = match[2];
+        const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
+        extracted.push(productLink);
+      }
+    });
+
+    setResults(extracted);
+  } catch (error) {
+    console.error("Error extracting links:", error);
+  }
+};
   
   const copyAllLinks = () => {
   const text = results.join("\n");
