@@ -1,80 +1,93 @@
 "use client";
-import React, { useState } from "react";
-import Layout from "@/components/includes/Layout";
+import { useState } from "react";
+import Layout from "@/components/Layout";
 import withProtectedUser from "@/hoc/withProtectedUser";
 
 const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState("");
   const [results, setResults] = useState([]);
 
-  const extractCommissionLinks = () => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlInput, "text/html");
+  const extractCommissionProducts = () => {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlInput, "text/html");
+      const items = doc.querySelectorAll("li");
 
-    const items = Array.from(doc.querySelectorAll("a"));
+      const extracted = [];
 
-    const links = items
-      .filter((item) => {
-        // ค้นหา img ที่ alt="ams-label" ซึ่งเป็นสัญลักษณ์ของสินค้ามีค่าคอม
-        return item.querySelector('img[alt="ams-label"]');
-      })
-      .map((item) => {
-        const href = item.getAttribute("href");
-        return href?.startsWith("http") ? href : `https:${href}`;
+      items.forEach((item) => {
+        // ตรวจสอบว่าในแต่ละสินค้า มีรูป promotion label หรือไม่
+        const promoImg = item.querySelector("img[alt='promotion-label']");
+        if (!promoImg) return;
+
+        // หา href จาก <a class="contents" href="/...">
+        const linkTag = item.querySelector("a.contents");
+        if (!linkTag) return;
+
+        const href = linkTag.getAttribute("href");
+        if (!href) return;
+
+        const match = href.match(/-i\.(\d+)\.(\d+)/); // ดึง shopid และ itemid
+        if (match) {
+          const shopid = match[1];
+          const itemid = match[2];
+          const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
+          extracted.push(productLink);
+        }
       });
 
-    setResults(links.filter(Boolean));
+      setResults(extracted);
+    } catch (error) {
+      console.error("Error extracting links:", error);
+    }
   };
 
-  const copyToClipboard = () => {
-    const allLinks = results.join("\n");
-    navigator.clipboard
-      .writeText(allLinks)
-      .then(() => alert("คัดลอกลิงก์ทั้งหมดแล้ว!"))
-      .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => alert("คัดลอกลิงก์สำเร็จ!"),
+      () => alert("ไม่สามารถคัดลอกลิงก์ได้!")
+    );
   };
 
   return (
     <Layout>
       <div className="p-6 bg-gray-100 min-h-screen text-gray-800">
         <h1 className="text-2xl font-bold text-center text-orange-600 mb-4">
-          ดึงสินค้ามีค่าคอม
+          ดึงสินค้ายอดนิยม (มีค่าคอม)
         </h1>
 
         <textarea
           value={htmlInput}
           onChange={(e) => setHtmlInput(e.target.value)}
-          placeholder="วางโค้ด HTML ของสินค้า Shopee ที่คัดลอกมาที่นี่..."
-          className="w-full p-3 border rounded mb-4 h-40"
+          rows={12}
+          className="w-full p-3 border border-gray-400 rounded mb-4"
+          placeholder="วาง HTML ที่ก๊อปมาจาก Shopee ที่นี่"
         />
 
-        <div className="flex flex-wrap gap-3 mb-4">
-          <button
-            onClick={extractCommissionProducts}
-            className="bg-orange-600 text-white px-4 py-2 rounded"
-          >
-            ดึงสินค้ามีค่าคอม
-          </button>
-          <button
-            onClick={copyAllLinks}
-            className="bg-green-600 text-white px-4 py-2 rounded"
-          >
-            คัดลอกลิงก์ทั้งหมด
-          </button>
-        </div>
+        <button
+          onClick={extractCommissionProducts}
+          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded font-semibold"
+        >
+          🔍 ดึงลิงก์สินค้า
+        </button>
 
-        <div className="bg-white border rounded p-4 shadow min-h-[200px] overflow-y-auto">
-          {results.length > 0 ? (
-            results.map((link, idx) => (
-              <div key={idx} className="text-sm mb-1">
-                {link}
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500 text-sm">
-              ยังไม่มีลิงก์สินค้าที่มีค่าคอม
-            </p>
-          )}
+        <div className="mt-6">
+          <h2 className="text-lg font-bold mb-2">
+            📦 ลิงก์สินค้าที่มีค่าคอม ({results.length} รายการ)
+          </h2>
+          <ul className="space-y-2">
+            {results.map((link, index) => (
+              <li key={index} className="bg-white p-2 rounded shadow flex justify-between items-center">
+                <span className="truncate max-w-[80%] text-blue-600 underline">{link}</span>
+                <button
+                  onClick={() => copyToClipboard(link)}
+                  className="text-sm text-orange-600 hover:underline"
+                >
+                  คัดลอก
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </Layout>
