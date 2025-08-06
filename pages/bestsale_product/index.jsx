@@ -81,4 +81,4 @@ const BestSaleProducts = () => {
   );
 };
 
-export default withProtectedUser(CommissionProducts);
+export default withProtectedUser(BestSaleProducts);
