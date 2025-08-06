@@ -8,51 +8,38 @@ const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState("");
   const [results, setResults] = useState([]);
 
-  const extractCommissionProducts = () => {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlInput, "text/html");
-    const items = doc.querySelectorAll("li");
+  const extractCommissionLinks = () => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlInput, "text/html");
 
-    const extracted = [];
+  const result = [];
 
-    const commissionImageKeywords = [
-      "promotion-label",
-      "ams-label",
-      "fd4662aa56269f31f40d.png",
-      "shopee/modules-federation/live/0/shopee__item-card-standard-v2" // เผื่อ Shopee เปลี่ยนชื่อไฟล์
-    ];
+  const items = doc.querySelectorAll("li.shopee-search-item-result__item");
 
-    items.forEach((item) => {
-      // หาภาพทั้งหมดในสินค้า 1 ชิ้น
-      const images = item.querySelectorAll("img");
-      const hasCommissionImage = Array.from(images).some((img) => {
-        const src = img.getAttribute("src") || "";
-        return commissionImageKeywords.some((keyword) => src.includes(keyword));
-      });
+  items.forEach((item) => {
+    // โครงสร้างที่ 1: ตรวจจาก src รูปภาพค่าคอม
+    const hasCommissionImage1 = item.querySelector(
+      'img[src*="fd4662aa56269f31f40d.png"]'
+    );
 
-      if (!hasCommissionImage) return;
+    // โครงสร้างที่ 2: ตรวจจาก alt="promotion-label"
+    const hasCommissionImage2 = item.querySelector(
+      'img[alt="promotion-label"]'
+    );
 
-      const linkTag = item.querySelector("a[href*='-i.']");
-      if (!linkTag) return;
-
-      const href = linkTag.getAttribute("href");
-      const match = href.match(/-i\.(\d+)\.(\d+)/);
-      if (match) {
-        const shopid = match[1];
-        const itemid = match[2];
-        const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-        extracted.push(productLink);
+    if (hasCommissionImage1 || hasCommissionImage2) {
+      const aTag = item.querySelector("a.contents");
+      const href = aTag ? aTag.getAttribute("href") : null;
+      if (href) {
+        result.push("https://shopee.co.th" + href);
       }
-    });
+    }
+  });
 
-    setResults(extracted);
-  } catch (error) {
-    console.error("Error extracting links:", error);
-  }
+  setResults(result);
 };
 
-  
+
   const copyAllLinks = () => {
   const text = results.join("\n");
   navigator.clipboard.writeText(text)
