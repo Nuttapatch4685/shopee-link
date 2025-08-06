@@ -60,6 +60,12 @@ const Sidenav = (props) => {
       icon: <GoDot />,
       access: ["SUPERADMIN", "ADMIN", "USER"],
     },
+      {
+      label: "ดึงสินค้ายอดนิยม",
+      href: "/bestsale_product",
+      icon: <GoDot />,
+      access: ["SUPERADMIN", "ADMIN", "USER"],
+    },
   ];
 
   return (
