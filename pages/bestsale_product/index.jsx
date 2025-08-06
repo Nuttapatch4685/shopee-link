@@ -3,44 +3,31 @@ import React, { useState } from "react";
 import Layout from "@/components/includes/Layout";
 import withProtectedUser from "@/hoc/withProtectedUser";
 
-const CommissionProducts = () => {
-  const [htmlInput, setHtmlInput] = useState("");
-  const [results, setResults] = useState([]);
+const extractCommissionProducts = () => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlInput, "text/html");
+  const items = doc.querySelectorAll(".shopee-search-item-result__item");
+  const extracted = [];
 
-  const extractCommissionProducts = () => {
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlInput, "text/html");
+  items.forEach((item) => {
+    const badge = item.querySelector('img[alt="promotion-label"]');
+    if (!badge) return;
 
-      const items = doc.querySelectorAll(".shopee-search-item-result__item");
-      const extracted = [];
-
-      items.forEach((item) => {
-        // ✅ ตรวจ badge ams-label
-        const badge = item.querySelector(
-          'img[alt="ams-label"][src*="fd4662aa"]'
-        );
-        if (!badge) return;
-
-        // ✅ หา link สินค้า
-        const linkEl = item.querySelector('a[href*="/-i."]');
-        if (linkEl) {
-          const href = linkEl.getAttribute("href");
-          const match = href.match(/-i\.(\d+)\.(\d+)/);
-          if (match) {
-            const shopid = match[1];
-            const itemid = match[2];
-            const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-            extracted.push(productLink);
-          }
-        }
-      });
-
-      setResults(extracted);
-    } catch (err) {
-      console.error("Parsing error:", err);
+    const linkEl = item.querySelector('a[href*="/-i."]');
+    if (linkEl) {
+      const href = linkEl.getAttribute("href");
+      const match = href.match(/-i\.(\d+)\.(\d+)/);
+      if (match) {
+        const shopid = match[1];
+        const itemid = match[2];
+        const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
+        extracted.push(productLink);
+      }
     }
-  };
+  });
+
+  setResults(extracted);
+};
 
   const copyAllLinks = () => {
     if (results.length === 0) {
@@ -98,6 +85,5 @@ const CommissionProducts = () => {
       </div>
     </Layout>
   );
-};
 
 export default withProtectedUser(CommissionProducts);
