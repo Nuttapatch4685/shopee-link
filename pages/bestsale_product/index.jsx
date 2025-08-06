@@ -3,48 +3,54 @@ import React, { useState } from "react";
 import Layout from "@/components/includes/Layout";
 import withProtectedUser from "@/hoc/withProtectedUser";
 
-const BestSaleProducts = () => {
-  const [htmlInput, setHtmlInput] = useState('');
+const CommissionProducts = () => {
+  const [htmlInput, setHtmlInput] = useState("");
   const [results, setResults] = useState([]);
 
   const extractCommissionProducts = () => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlInput, 'text/html');
-    const items = doc.querySelectorAll('a[data-sqe="link"]');
-    const extracted = [];
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlInput, "text/html");
 
-    items.forEach((item) => {
-      const commissionImg = item.querySelector('img[src*="fd4662aa56269f31f40d.png"]');
-      if (commissionImg) {
-        const href = item.href;
-        if (href) {
-          let cleanLink = href;
-          try {
-            const url = new URL(href);
-            const pathname = url.pathname;
-            const itemIdMatch = pathname.match(/-i\.(\d+)\.(\d+)/);
-            if (itemIdMatch) {
-              const itemId = itemIdMatch[2];
-              const shopId = itemIdMatch[1];
-              cleanLink = `https://shope.ee/${shopId}-${itemId}`;
-            }
-          } catch (error) {
-            console.error('Invalid URL format:', href);
+      const items = doc.querySelectorAll(".shopee-search-item-result__item");
+      const extracted = [];
+
+      items.forEach((item) => {
+        // ✅ ตรวจ badge ams-label
+        const badge = item.querySelector(
+          'img[alt="ams-label"][src*="fd4662aa"]'
+        );
+        if (!badge) return;
+
+        // ✅ หา link สินค้า
+        const linkEl = item.querySelector('a[href*="/-i."]');
+        if (linkEl) {
+          const href = linkEl.getAttribute("href");
+          const match = href.match(/-i\.(\d+)\.(\d+)/);
+          if (match) {
+            const shopid = match[1];
+            const itemid = match[2];
+            const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
+            extracted.push(productLink);
           }
-
-          extracted.push(cleanLink);
         }
-      }
-    });
+      });
 
-    setResults(extracted);
+      setResults(extracted);
+    } catch (err) {
+      console.error("Parsing error:", err);
+    }
   };
 
-  const copyToClipboard = () => {
-    const textToCopy = results.join('\n');
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => alert('คัดลอกลิงก์ทั้งหมดแล้ว!'))
-      .catch((err) => alert('คัดลอกไม่สำเร็จ: ' + err));
+  const copyAllLinks = () => {
+    if (results.length === 0) {
+      alert("ยังไม่มีลิงก์ให้คัดลอก!");
+      return;
+    }
+    navigator.clipboard
+      .writeText(results.join("\n"))
+      .then(() => alert("คัดลอกทั้งหมดสำเร็จ!"))
+      .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
   };
 
   return (
