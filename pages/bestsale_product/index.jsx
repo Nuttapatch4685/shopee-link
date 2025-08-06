@@ -42,13 +42,13 @@ const BestSaleProducts = () => {
       console.error("Error extracting links:", error);
     }
   };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(
-      () => alert("คัดลอกลิงก์สำเร็จ!"),
-      () => alert("ไม่สามารถคัดลอกลิงก์ได้!")
-    );
-  };
+  
+  const copyAllLinks = () => {
+  const text = results.join("\n");
+  navigator.clipboard.writeText(text)
+    .then(() => alert("คัดลอกลิงก์ทั้งหมดแล้ว!"))
+    .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
+    };
 
   return (
      <Layout>
