@@ -3,31 +3,36 @@ import React, { useState } from "react";
 import Layout from "@/components/includes/Layout";
 import withProtectedUser from "@/hoc/withProtectedUser";
 
-const extractCommissionProducts = () => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlInput, "text/html");
-  const items = doc.querySelectorAll(".shopee-search-item-result__item");
-  const extracted = [];
+const CommissionProducts = () => {
+  const [htmlInput, setHtmlInput] = useState("");
+  const [results, setResults] = useState([]);
 
-  items.forEach((item) => {
-    const badge = item.querySelector('img[alt="promotion-label"]');
-    if (!badge) return;
+  const extractCommissionProducts = () => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlInput, "text/html");
+    const items = doc.querySelectorAll(".shopee-search-item-result__item");
+    const extracted = [];
 
-    const linkEl = item.querySelector('a[href*="/-i."]');
-    if (linkEl) {
-      const href = linkEl.getAttribute("href");
-      const match = href.match(/-i\.(\d+)\.(\d+)/);
-      if (match) {
-        const shopid = match[1];
-        const itemid = match[2];
-        const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-        extracted.push(productLink);
+    items.forEach((item) => {
+      // ตรวจสอบเฉพาะ badge ค่าคอม
+      const badge = item.querySelector('img[alt="ams-label"]');
+      if (!badge) return;
+
+      const linkEl = item.querySelector('a[href*="/-i."]');
+      if (linkEl) {
+        const href = linkEl.getAttribute("href");
+        const match = href.match(/-i\.(\d+)\.(\d+)/);
+        if (match) {
+          const shopid = match[1];
+          const itemid = match[2];
+          const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
+          extracted.push(productLink);
+        }
       }
-    }
-  });
+    });
 
-  setResults(extracted);
-};
+    setResults(extracted);
+  };
 
   const copyAllLinks = () => {
     if (results.length === 0) {
@@ -85,5 +90,6 @@ const extractCommissionProducts = () => {
       </div>
     </Layout>
   );
+};
 
 export default withProtectedUser(CommissionProducts);
