@@ -8,14 +8,14 @@ import withProtectedUser from '@/hoc/withProtectedUser';
 
 const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState('');
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState([]);
 
   const extractCommissionProducts = () => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlInput, 'text/html');
 
     const items = doc.querySelectorAll('.shopee-search-item-result__item');
-    const extracted: string[] = [];
+    const extracted = [];
 
     items.forEach((item) => {
       const badge = item.querySelector('img[src*="fd4662aa"]');
