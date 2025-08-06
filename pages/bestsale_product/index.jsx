@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
-import Layout from "@/components/Layout";
+import React,{useState} from "react";
 import withProtectedUser from "@/hoc/withProtectedUser";
+import Layout from "@/components/includes/Layout";
+import Button from "@/components/ui/Button";
 
 const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState("");
