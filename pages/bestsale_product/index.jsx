@@ -3,45 +3,34 @@ import React, { useState } from "react";
 import Layout from "@/components/includes/Layout";
 import withProtectedUser from "@/hoc/withProtectedUser";
 
-const CommissionProducts = () => {
+const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState("");
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<string[]>([]);
 
-  const extractCommissionProducts = () => {
+  const extractCommissionLinks = () => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlInput, "text/html");
-    const items = doc.querySelectorAll(".shopee-search-item-result__item");
-    const extracted = [];
 
-    items.forEach((item) => {
-      // ตรวจสอบเฉพาะ badge ค่าคอม
-      const badge = item.querySelector('img[alt="ams-label"]');
-      if (!badge) return;
+    const items = Array.from(doc.querySelectorAll("a"));
 
-      const linkEl = item.querySelector('a[href*="/-i."]');
-      if (linkEl) {
-        const href = linkEl.getAttribute("href");
-        const match = href.match(/-i\.(\d+)\.(\d+)/);
-        if (match) {
-          const shopid = match[1];
-          const itemid = match[2];
-          const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-          extracted.push(productLink);
-        }
-      }
-    });
+    const links = items
+      .filter((item) => {
+        // ค้นหา img ที่ alt="ams-label" ซึ่งเป็นสัญลักษณ์ของสินค้ามีค่าคอม
+        return item.querySelector('img[alt="ams-label"]');
+      })
+      .map((item) => {
+        const href = item.getAttribute("href");
+        return href?.startsWith("http") ? href : `https:${href}`;
+      });
 
-    setResults(extracted);
+    setResults(links.filter(Boolean));
   };
 
-  const copyAllLinks = () => {
-    if (results.length === 0) {
-      alert("ยังไม่มีลิงก์ให้คัดลอก!");
-      return;
-    }
+  const copyToClipboard = () => {
+    const allLinks = results.join("\n");
     navigator.clipboard
-      .writeText(results.join("\n"))
-      .then(() => alert("คัดลอกทั้งหมดสำเร็จ!"))
+      .writeText(allLinks)
+      .then(() => alert("คัดลอกลิงก์ทั้งหมดแล้ว!"))
       .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
   };
 
