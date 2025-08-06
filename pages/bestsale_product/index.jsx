@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import Layout from "@/components/Layout";
-import TextField from '@/ui/TextField';
-import Button from '@/ui/Button';
-import withProtectedUser from '@/hoc/withProtectedUser';
+import React,{useState} from "react";
+import withProtectedUser from "@/hoc/withProtectedUser";
+import Layout from "@/components/includes/Layout";
+import Button from "@/components/ui/Button";
 
 const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState('');
@@ -13,25 +12,30 @@ const BestSaleProducts = () => {
   const extractCommissionProducts = () => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlInput, 'text/html');
-
-    const items = doc.querySelectorAll('.shopee-search-item-result__item');
+    const items = doc.querySelectorAll('a[data-sqe="link"]');
     const extracted = [];
 
     items.forEach((item) => {
-      const badge = item.querySelector('img[src*="fd4662aa"]');
-      if (!badge) return;
+      const commissionImg = item.querySelector('img[src*="fd4662aa56269f31f40d.png"]');
+      if (commissionImg) {
+        const href = item.href;
+        if (href) {
+          let cleanLink = href;
+          try {
+            const url = new URL(href);
+            const pathname = url.pathname;
+            const itemIdMatch = pathname.match(/-i\.(\d+)\.(\d+)/);
+            if (itemIdMatch) {
+              const itemId = itemIdMatch[2];
+              const shopId = itemIdMatch[1];
+              cleanLink = `https://shope.ee/${shopId}-${itemId}`;
+            }
+          } catch (error) {
+            console.error('Invalid URL format:', href);
+          }
 
-      const linkEl = item.querySelector('a[href*="-i."]');
-      if (!linkEl) return;
-
-      const href = linkEl.getAttribute('href');
-      const match = href?.match(/-i\.(\d+)\.(\d+)/);
-
-      if (match) {
-        const shopid = match[1];
-        const itemid = match[2];
-        const productLink = `https://shopee.co.th/product/${shopid}/${itemid}`;
-        extracted.push(productLink);
+          extracted.push(cleanLink);
+        }
       }
     });
 
@@ -39,8 +43,10 @@ const BestSaleProducts = () => {
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(results.join('\n'));
-    alert('คัดลอกลิงก์ทั้งหมดแล้ว');
+    const textToCopy = results.join('\n');
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => alert('คัดลอกลิงก์ทั้งหมดแล้ว!'))
+      .catch((err) => alert('คัดลอกไม่สำเร็จ: ' + err));
   };
 
   return (
