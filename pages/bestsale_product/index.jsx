@@ -1,5 +1,5 @@
 "use client";
-import React,{useState} from "react";
+import React, { useState } from "react";
 import withProtectedUser from "@/hoc/withProtectedUser";
 import Layout from "@/components/includes/Layout";
 import Button from "@/components/ui/Button";
@@ -11,18 +11,13 @@ const BestSaleProducts = () => {
   const extractCommissionLinks = () => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlInput, "text/html");
-
     const result = [];
-
     const items = doc.querySelectorAll("li.shopee-search-item-result__item");
 
     items.forEach((item) => {
-      // โครงสร้างที่ 1: ตรวจจาก src รูปภาพค่าคอม
       const hasCommissionImage1 = item.querySelector(
         'img[src*="fd4662aa56269f31f40d.png"]'
       );
-
-      // โครงสร้างที่ 2: ตรวจจาก alt="promotion-label"
       const hasCommissionImage2 = item.querySelector(
         'img[alt="promotion-label"]'
       );
@@ -30,9 +25,7 @@ const BestSaleProducts = () => {
       if (hasCommissionImage1 || hasCommissionImage2) {
         const aTag = item.querySelector("a.contents");
         const href = aTag ? aTag.getAttribute("href") : null;
-
         if (href) {
-          // แปลงลิงก์เป็นแบบ https://shopee.co.th/product/shopId/productId
           const match = href.match(/i\.(\d+)\.(\d+)/);
           if (match) {
             const shopId = match[1];
@@ -46,18 +39,17 @@ const BestSaleProducts = () => {
 
     setResults(result);
   };
-};
-
 
   const copyAllLinks = () => {
-  const text = results.join("\n");
-  navigator.clipboard.writeText(text)
-    .then(() => alert("คัดลอกลิงก์ทั้งหมดแล้ว!"))
-    .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
-    };
+    const text = results.join("\n");
+    navigator.clipboard
+      .writeText(text)
+      .then(() => alert("คัดลอกลิงก์ทั้งหมดแล้ว!"))
+      .catch(() => alert("ไม่สามารถคัดลอกลิงก์ได้!"));
+  };
 
   return (
-     <Layout>
+    <Layout>
       <div className="p-6 bg-gray-100 min-h-screen text-gray-800">
         <h1 className="text-2xl font-bold text-center text-orange-600 mb-4">
           ดึงสินค้ามีค่าคอม
