@@ -5,7 +5,7 @@ import withProtectedUser from "@/hoc/withProtectedUser";
 
 const BestSaleProducts = () => {
   const [htmlInput, setHtmlInput] = useState("");
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState([]);
 
   const extractCommissionLinks = () => {
     const parser = new DOMParser();
