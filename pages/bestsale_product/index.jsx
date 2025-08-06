@@ -9,34 +9,43 @@ const BestSaleProducts = () => {
   const [results, setResults] = useState([]);
 
   const extractCommissionLinks = () => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlInput, "text/html");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlInput, "text/html");
 
-  const result = [];
+    const result = [];
 
-  const items = doc.querySelectorAll("li.shopee-search-item-result__item");
+    const items = doc.querySelectorAll("li.shopee-search-item-result__item");
 
-  items.forEach((item) => {
-    // โครงสร้างที่ 1: ตรวจจาก src รูปภาพค่าคอม
-    const hasCommissionImage1 = item.querySelector(
-      'img[src*="fd4662aa56269f31f40d.png"]'
-    );
+    items.forEach((item) => {
+      // โครงสร้างที่ 1: ตรวจจาก src รูปภาพค่าคอม
+      const hasCommissionImage1 = item.querySelector(
+        'img[src*="fd4662aa56269f31f40d.png"]'
+      );
 
-    // โครงสร้างที่ 2: ตรวจจาก alt="promotion-label"
-    const hasCommissionImage2 = item.querySelector(
-      'img[alt="promotion-label"]'
-    );
+      // โครงสร้างที่ 2: ตรวจจาก alt="promotion-label"
+      const hasCommissionImage2 = item.querySelector(
+        'img[alt="promotion-label"]'
+      );
 
-    if (hasCommissionImage1 || hasCommissionImage2) {
-      const aTag = item.querySelector("a.contents");
-      const href = aTag ? aTag.getAttribute("href") : null;
-      if (href) {
-        result.push("https://shopee.co.th" + href);
+      if (hasCommissionImage1 || hasCommissionImage2) {
+        const aTag = item.querySelector("a.contents");
+        const href = aTag ? aTag.getAttribute("href") : null;
+
+        if (href) {
+          // แปลงลิงก์เป็นแบบ https://shopee.co.th/product/shopId/productId
+          const match = href.match(/i\.(\d+)\.(\d+)/);
+          if (match) {
+            const shopId = match[1];
+            const productId = match[2];
+            const fullUrl = `https://shopee.co.th/product/${shopId}/${productId}`;
+            result.push(fullUrl);
+          }
+        }
       }
-    }
-  });
+    });
 
-  setResults(result);
+    setResults(result);
+  };
 };
 
 
