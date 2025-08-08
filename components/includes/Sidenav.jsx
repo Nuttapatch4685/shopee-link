@@ -66,6 +66,12 @@ const Sidenav = (props) => {
       icon: <GoDot />,
       access: ["SUPERADMIN", "ADMIN", "USER"],
     },
+    {
+      label: "ลบลิงค์ซ้ำ",
+      href: "/same_link",
+      icon: <GoDot />,
+      access: ["SUPERADMIN", "ADMIN", "USER"],
+    },
   ];
 
   return (
