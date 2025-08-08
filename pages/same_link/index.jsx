@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/button';
-import { withProtectedUser } from '@/hoc/withProtectedUser';
+import React,{useState} from "react";
+import withProtectedUser from "@/hoc/withProtectedUser";
+import Layout from "@/components/includes/Layout";
+import Button from "@/components/ui/Button";
 
 const RemoveDuplicateLinks = () => {
   const [inputText, setInputText] = useState('');
